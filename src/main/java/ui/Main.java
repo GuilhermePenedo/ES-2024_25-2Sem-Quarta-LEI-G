@@ -1,7 +1,6 @@
 package ui;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import cadastro.importer.Cadastro;
@@ -14,13 +13,11 @@ public class Main extends Application {
         // Carrega os dados cadastrais
         List<Cadastro> cadastros = Cadastro.getCadastros("Dados/Madeira-Moodle-1.1.csv");
 
-        // Carrega o FXML
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("mapa.fxml"));
-        Scene scene = new Scene(loader.load(), 800, 600);
-        
-        // Obtém o controlador e configura os cadastros
-        MapaController controller = loader.getController();
-        controller.setCadastros(cadastros);
+        // Cria o mapa
+        MapaVisualizacao mapaVisualizacao = new MapaVisualizacao(cadastros);
+
+        // Configura a cena
+        Scene scene = new Scene(mapaVisualizacao, 800, 600);
 
         // Configura a janela principal
         primaryStage.setTitle("Visualização de Dados Cadastrais");
