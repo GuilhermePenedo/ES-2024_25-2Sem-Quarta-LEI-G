@@ -27,22 +27,43 @@ public class Cadastro {
     private final List<String> location;
 
     Cadastro(CSVRecord record) throws ParseException {
-        this.id = Integer.parseInt(record.get(0));
-        this.length = Double.parseDouble(record.get(3));
-        this.area = Double.parseDouble(record.get(4));
-        this.shape = handleShape(record.get(5));
-        this.owner = Integer.parseInt(record.get(6));
-        this.location = handleLocation(record);
+        logger.debug("Iniciando criação de cadastro a partir do registro: {}", record);
+        try {
+            this.id = Integer.parseInt(record.get(0));
+            logger.trace("ID do cadastro: {}", this.id);
+            
+            this.length = Double.parseDouble(record.get(3));
+            logger.trace("Comprimento do cadastro: {}", this.length);
+            
+            this.area = Double.parseDouble(record.get(4));
+            logger.trace("Área do cadastro: {}", this.area);
+            
+            this.shape = handleShape(record.get(5));
+            logger.trace("Geometria processada com sucesso");
+            
+            this.owner = Integer.parseInt(record.get(6));
+            logger.trace("Proprietário do cadastro: {}", this.owner);
+            
+            this.location = handleLocation(record);
+            logger.trace("Localizações processadas: {}", this.location);
+            
+            logger.info("Cadastro {} criado com sucesso", this.id);
+        } catch (NumberFormatException e) {
+            logger.error("Erro ao converter valores numéricos do registro: {}", record, e);
+            throw new IllegalArgumentException("Erro ao converter valores numéricos", e);
+        }
     }
 
     private MultiPolygon handleShape(String record) throws ParseException {
+        logger.debug("Processando geometria WKT: {}", record);
         try {
             WKTReader reader = new WKTReader();
             Geometry geometry = reader.read(record);
             if (geometry instanceof MultiPolygon multiPolygon) {
+                logger.debug("Geometria processada com sucesso como MultiPolygon");
                 return multiPolygon;
             } else {
-                String errorMsg = record + " is not a multipolygon";
+                String errorMsg = record + " não é um MultiPolygon";
                 logger.error(errorMsg);
                 throw new IllegalArgumentException(errorMsg);
             }
@@ -53,7 +74,13 @@ public class Cadastro {
     }
 
     private List<String> handleLocation(CSVRecord record) {
-        return record.stream().skip(7).filter(s -> !s.equals("NA")).toList();
+        logger.debug("Processando localizações do registro");
+        List<String> locations = record.stream()
+                .skip(7)
+                .filter(s -> !s.equals("NA"))
+                .toList();
+        logger.debug("Localizações processadas: {}", locations);
+        return locations;
     }
 
     public static List<Cadastro> getCadastros(String path) throws Exception {
@@ -64,18 +91,28 @@ public class Cadastro {
              CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
 
             boolean isFirstRow = true;
+            int rowCount = 0;
+            
             for (CSVRecord record : parser) {
-                //Ignora o header
+                rowCount++;
                 if (isFirstRow) {
+                    logger.debug("Ignorando linha de cabeçalho (linha {})", rowCount);
                     isFirstRow = false;
-                    logger.debug("Ignorando linha de cabeçalho");
                     continue;
                 }
-                Cadastro cadastro = new Cadastro(record);
-                cadastros.add(cadastro);
-                logger.debug("Cadastro processado: {}", cadastro.getId());
+                
+                try {
+                    Cadastro cadastro = new Cadastro(record);
+                    cadastros.add(cadastro);
+                    logger.debug("Cadastro {} processado com sucesso (linha {})", cadastro.getId(), rowCount);
+                } catch (Exception e) {
+                    logger.error("Erro ao processar cadastro na linha {}: {}", rowCount, record, e);
+                    throw e;
+                }
             }
-            logger.info("Leitura do arquivo CSV concluída. Total de cadastros: {}", cadastros.size());
+            
+            logger.info("Leitura do arquivo CSV concluída. Total de cadastros: {}, Total de linhas processadas: {}", 
+                    cadastros.size(), rowCount);
             return cadastros;
         } catch (IOException e) {
             logger.error("Erro ao ler o arquivo CSV: {}", path, e);
