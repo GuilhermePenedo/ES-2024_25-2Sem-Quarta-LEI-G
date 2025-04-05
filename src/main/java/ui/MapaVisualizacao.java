@@ -17,21 +17,20 @@ public class MapaVisualizacao extends Pane {
     private double[] center = new double[]{0, 0};
 
     public MapaVisualizacao(List<Cadastro> cadastros) {
-        setPrefSize(2000, 2000);  // Large canvas for zooming
+        setPrefSize(2000, 2000);  // Tamanho grande para permitir zoom
         setStyle("-fx-background-color: #f0f0f0;");
-
+        
         if (cadastros != null) {
             renderizarCadastros(cadastros);
         }
     }
-
 
     private void renderizarCadastros(List<Cadastro> cadastros) {
         for (Cadastro cadastro : cadastros) {
             try {
                 MultiPolygon multiPolygon = cadastro.getShape();
                 Shape shape = convertToJavaFXShape(multiPolygon);
-
+                
                 if (shape != null && !shape.getBoundsInLocal().isEmpty()) {
                     configureShape(shape, cadastro);
                     this.getChildren().add(shape);
@@ -65,7 +64,7 @@ public class MapaVisualizacao extends Pane {
         double width = maxX - minX;
         double height = maxY - minY;
 
-        // Ajuste inicial para caber no painel (sem escala automática reduzida)
+        // Ajuste inicial para caber no painel
         this.scaleFactor = Math.min(800 / width, 600 / height) * 1.5; // Zoom inicial maior
     }
 
@@ -119,7 +118,7 @@ public class MapaVisualizacao extends Pane {
         // Cores baseadas na área (exemplo)
         double areaRatio = cadastro.getArea() / 1000.0; // Ajuste o divisor conforme necessário
         Color fillColor = Color.hsb(240, 0.7, 1.0, 0.6); // Azul base
-
+        
         // Se quiser cores diferentes por área
         if (areaRatio > 1.0) {
             fillColor = Color.hsb(120, 0.7, 1.0, 0.6); // Verde para áreas maiores

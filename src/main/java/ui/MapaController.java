@@ -20,10 +20,9 @@ public class MapaController {
         this.mapaPane.getTransforms().add(scaleTransform);
         this.scrollPane.setContent(mapaPane);
 
-        // Enable zoom only when mouse is over the content
+        // Adiciona evento de rolagem para zoom
         mapaPane.setOnScroll(event -> {
-            System.out.println("Scroll event: Ctrl="+event.isControlDown()+" Delta="+event.getDeltaY());
-            if (event.isControlDown()) {  // Zoom only when Ctrl is held
+            if (event.isControlDown()) {  // Zoom apenas quando Ctrl está pressionado
                 double zoomFactor = event.getDeltaY() > 0 ? 1.2 : 0.8;
                 applyZoom(zoomFactor, event.getX(), event.getY());
                 event.consume();
@@ -38,21 +37,21 @@ public class MapaController {
     }
 
     private void applyZoom(double zoomFactor, double pivotX, double pivotY) {
-        // Calculate new scale with limits
+        // Calcula nova escala com limites
         scaleValue = Math.max(0.1, Math.min(10, scaleValue * zoomFactor));
-
-        // Apply zoom centered on mouse position
+        
+        // Aplica zoom centralizado na posição do mouse
         scaleTransform.setX(scaleValue);
         scaleTransform.setY(scaleValue);
-
-        // Adjust scroll to keep focus on zoom point
+        
+        // Ajusta a rolagem para manter o foco no ponto de zoom
         scrollPane.setHvalue(
-                (pivotX/scrollPane.getContent().getBoundsInLocal().getWidth()) *
-                        (scaleTransform.getX()/zoomFactor)
+            (pivotX/scrollPane.getContent().getBoundsInLocal().getWidth()) * 
+            (scaleTransform.getX()/zoomFactor)
         );
         scrollPane.setVvalue(
-                (pivotY/scrollPane.getContent().getBoundsInLocal().getHeight()) *
-                        (scaleTransform.getY()/zoomFactor)
+            (pivotY/scrollPane.getContent().getBoundsInLocal().getHeight()) * 
+            (scaleTransform.getY()/zoomFactor)
         );
     }
 }
