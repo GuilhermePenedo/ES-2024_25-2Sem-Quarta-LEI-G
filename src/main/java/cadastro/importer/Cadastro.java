@@ -7,6 +7,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cadastro {
+    private static final Logger logger = LoggerFactory.getLogger(Cadastro.class);
 
     private final int id;
     private final double length;
@@ -33,12 +36,19 @@ public class Cadastro {
     }
 
     private MultiPolygon handleShape(String record) throws ParseException {
-        WKTReader reader = new WKTReader();
-        Geometry geometry = reader.read(record);
-        if (geometry instanceof MultiPolygon multiPolygon) {
-            return multiPolygon;
-        }else{
-            throw new IllegalArgumentException(record + " is not not a multipolygon");
+        try {
+            WKTReader reader = new WKTReader();
+            Geometry geometry = reader.read(record);
+            if (geometry instanceof MultiPolygon multiPolygon) {
+                return multiPolygon;
+            } else {
+                String errorMsg = record + " is not a multipolygon";
+                logger.error(errorMsg);
+                throw new IllegalArgumentException(errorMsg);
+            }
+        } catch (ParseException e) {
+            logger.error("Erro ao processar geometria WKT: {}", record, e);
+            throw e;
         }
     }
 
@@ -48,6 +58,7 @@ public class Cadastro {
 
     public static List<Cadastro> getCadastros(String path) throws Exception {
         List<Cadastro> cadastros = new ArrayList<>();
+        logger.info("Iniciando leitura do arquivo CSV: {}", path);
 
         try (Reader in = new FileReader(path);
              CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
@@ -57,15 +68,20 @@ public class Cadastro {
                 //Ignora o header
                 if (isFirstRow) {
                     isFirstRow = false;
+                    logger.debug("Ignorando linha de cabeçalho");
                     continue;
                 }
-                cadastros.add(new Cadastro(record));
+                Cadastro cadastro = new Cadastro(record);
+                cadastros.add(cadastro);
+                logger.debug("Cadastro processado: {}", cadastro.getId());
             }
+            logger.info("Leitura do arquivo CSV concluída. Total de cadastros: {}", cadastros.size());
             return cadastros;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Erro ao ler o arquivo CSV: {}", path, e);
             throw new Exception("Erro ao ler o ficheiro CSV", e);
         } catch (ParseException e) {
+            logger.error("Erro ao processar geometria", e);
             throw new RuntimeException(e);
         }
     }
