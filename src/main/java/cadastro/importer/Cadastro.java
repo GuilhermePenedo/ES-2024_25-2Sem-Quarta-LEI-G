@@ -90,25 +90,9 @@ public class Cadastro {
         try (Reader in = new FileReader(path);
              CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
 
-            boolean isFirstRow = true;
-            int rowCount = 0;
-            
-            for (CSVRecord record : parser) {
-                rowCount++;
-                if (isFirstRow) {
-                    logger.debug("Ignorando linha de cabeçalho (linha {})", rowCount);
-                    isFirstRow = false;
-                    continue;
-                }
-                
-                try {
-                    Cadastro cadastro = new Cadastro(record);
-                    cadastros.add(cadastro);
-                    logger.debug("Cadastro {} processado com sucesso (linha {})", cadastro.getId(), rowCount);
-                } catch (Exception e) {
-                    logger.error("Erro ao processar cadastro na linha {}: {}", rowCount, record, e);
-                    throw e;
-                }
+            List<CSVRecord> records = parser.getRecords();
+            for(int i = 1; i < records.size(); i++) {
+                cadastros.add(new Cadastro(records.get(i)));
             }
             
             logger.info("Leitura do arquivo CSV concluída. Total de cadastros: {}, Total de linhas processadas: {}", 
