@@ -2,7 +2,7 @@ package cadastro.gui;
 
 public class Main {
     public static void main(String[] args) {
-            MainGUI visualizador = new MainGUI();
+            GUI visualizador = new GUI();
             visualizador.setVisible(true);
     }
 }
