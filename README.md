@@ -47,8 +47,6 @@ src/
     │   │   │   └── CadastroTest.java
     │   │   └── graph/
     │   │       └── PropertyGraphTest.java
-    └── resources/
-        └── logback-test.xml
 ```
 
 ### Classes Principais
