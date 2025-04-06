@@ -94,9 +94,6 @@ public class Cadastro {
             for(int i = 1; i < records.size(); i++) {
                 cadastros.add(new Cadastro(records.get(i)));
             }
-            
-            logger.info("Leitura do arquivo CSV concluída. Total de cadastros: {}, Total de linhas processadas: {}", 
-                    cadastros.size(), rowCount);
             return cadastros;
         } catch (IOException e) {
             logger.error("Erro ao ler o arquivo CSV: {}", path, e);

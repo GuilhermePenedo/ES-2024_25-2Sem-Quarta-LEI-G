@@ -1,4 +1,4 @@
-package gui;
+package cadastro.gui;
 
 import cadastro.importer.Cadastro;
 
@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 
-public class MapaGUI extends JFrame {
+public class MainGUI extends JFrame {
 
     private final JTextField csvPathInput;
     private final JButton browseButton;
@@ -16,7 +16,7 @@ public class MapaGUI extends JFrame {
     private final JPanel resultsPanel;
     private List<Cadastro> cadastros;
 
-    public MapaGUI() {
+    public MainGUI() {
         setTitle("Gestão de Propriedades");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,4 +1,4 @@
-package gui;
+package cadastro.gui;
 
 import cadastro.importer.Cadastro;
 import org.locationtech.jts.geom.Geometry;
