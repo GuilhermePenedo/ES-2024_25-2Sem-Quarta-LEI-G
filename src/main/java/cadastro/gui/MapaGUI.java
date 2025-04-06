@@ -164,7 +164,6 @@ public class MapaGUI extends JFrame {
     private void addResults() {
         // Calculate how many to load
         int toLoad = Math.min(cadastrosResultPointer + DEFAULT_CADASTROS_LOAD, cadastros.size());
-        System.out.println("Loading cadastros from " + cadastrosResultPointer + " to " + toLoad); // Debug line
 
         // Add the cadastros to the results panel
         for (int i = cadastrosResultPointer; i < toLoad; i++) {
