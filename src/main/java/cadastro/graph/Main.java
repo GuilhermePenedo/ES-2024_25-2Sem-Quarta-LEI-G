@@ -1,7 +1,6 @@
-package org.example;
+package cadastro.graph;
 
 import cadastro.importer.Cadastro;
-import cadastro.graph.PropertyGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
