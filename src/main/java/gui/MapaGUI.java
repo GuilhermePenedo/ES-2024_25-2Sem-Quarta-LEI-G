@@ -6,14 +6,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapaGUI extends JFrame {
 
+    private static final int DEFAULT_CADASTROS_LOAD = 5000;
+
     private final JTextField csvPathInput;
     private final JButton browseButton;
     private final JButton importButton;
+    private final JButton showMore;
     private final JPanel resultsPanel;
+    private int cadastrosResultPointer;
+    private final List<JButton> sortButtons = new ArrayList<>();
     private List<Cadastro> cadastros;
 
     public MapaGUI() {
@@ -38,9 +45,12 @@ public class MapaGUI extends JFrame {
         filePanel.add(csvPathInput, BorderLayout.CENTER);
         filePanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Painel de resultados com scroll
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+
+        showMore = new JButton("Mais");
+        showMore.addActionListener(this::moreResults);
+
         JScrollPane scrollPane = new JScrollPane(resultsPanel);
 
         // Adiciona componentes ao frame
@@ -50,10 +60,6 @@ public class MapaGUI extends JFrame {
         // Configura listeners
         browseButton.addActionListener(this::browseFile);
         importButton.addActionListener(this::importCadastros);
-
-        JButton viewMapButton = new JButton("Visualizar Mapa");
-        buttonPanel.add(viewMapButton);
-        viewMapButton.addActionListener(this::viewPropertiesMap);
     }
 
     private void browseFile(ActionEvent e) {
@@ -80,6 +86,22 @@ public class MapaGUI extends JFrame {
 
         try {
             cadastros = Cadastro.getCadastros(path);
+            JButton sortIdButtton = new JButton("Sort by ID");
+            JButton sortLengthButtton = new JButton("Sort by Length");
+            JButton sortAreaButtton = new JButton("Sort by Area");
+            JButton sortOwnerButtton = new JButton("Sort by Owner");
+
+            sortIdButtton.addActionListener(evento -> sortResults(evento, Cadastro.SORT_BY_ID));
+            sortLengthButtton.addActionListener(evento -> sortResults(evento, Cadastro.SORT_BY_LENGTH));
+            sortAreaButtton.addActionListener(evento -> sortResults(evento, Cadastro.SORT_BY_AREA));
+            sortOwnerButtton.addActionListener(evento -> sortResults(evento, Cadastro.SORT_BY_OWNER));
+
+            sortButtons.add(sortIdButtton);
+            sortButtons.add(sortLengthButtton);
+            sortButtons.add(sortAreaButtton);
+            sortButtons.add(sortOwnerButtton);
+
+
             displayResults();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
@@ -90,32 +112,98 @@ public class MapaGUI extends JFrame {
         }
     }
 
+    private void sortResults(ActionEvent e, int sortType) {
+        try {
+            cadastros = Cadastro.sortCadastros(cadastros, sortType);
+            displayResults();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao ordenar: " + ex.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
     private void displayResults() {
         resultsPanel.removeAll(); // Limpa resultados anteriores
 
-        for (Cadastro cadastro : cadastros) {
-            JButton cadastroButton = new JButton("Cadastro ID: " + cadastro.getId());
-            cadastroButton.addActionListener(e -> showShapeWindow(cadastro));
-
-            JPanel cardPanel = new JPanel(new BorderLayout());
-            cardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-            JLabel infoLabel = new JLabel(
-                    "<html>Proprietário: " + cadastro.getOwner() +
-                            "<br>Área: " + cadastro.getArea() +
-                            "<br>Comprimento: " + cadastro.getLength() + "</html>");
-
-            cardPanel.add(infoLabel, BorderLayout.CENTER);
-            cardPanel.add(cadastroButton, BorderLayout.SOUTH);
-            cardPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
-            resultsPanel.add(cardPanel);
-            resultsPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espaço entre itens
+        JPanel sortButtonsPanel = new JPanel();
+        sortButtonsPanel.setLayout(new BoxLayout(sortButtonsPanel, BoxLayout.X_AXIS));
+        for(JButton b : sortButtons){
+            sortButtonsPanel.add(b);
         }
+
+        resultsPanel.add(sortButtonsPanel);
+        cadastrosResultPointer = 0;
+        addResults();
+
+        resultsPanel.add(showMore);
 
         resultsPanel.revalidate();
         resultsPanel.repaint();
     }
+
+    private void moreResults(ActionEvent e) {
+        int toLoad = cadastrosResultPointer + DEFAULT_CADASTROS_LOAD;
+        if (toLoad > cadastros.size()) {
+            showMore.setEnabled(false);
+        }
+
+        resultsPanel.remove(showMore);
+
+        addResults();
+
+        resultsPanel.add(showMore);
+
+        resultsPanel.revalidate();
+        resultsPanel.repaint();
+    }
+
+
+
+    private void addResults() {
+        // Calculate how many to load
+        int toLoad = Math.min(cadastrosResultPointer + DEFAULT_CADASTROS_LOAD, cadastros.size());
+        System.out.println("Loading cadastros from " + cadastrosResultPointer + " to " + toLoad); // Debug line
+
+        // Add the cadastros to the results panel
+        for (int i = cadastrosResultPointer; i < toLoad; i++) {
+            showCadastroResult(cadastros.get(i));
+        }
+
+        cadastrosResultPointer = toLoad;
+    }
+
+    private void showCadastroResult(Cadastro cadastro) {
+        // Create components (don't immediately update the UI yet)
+        JButton cadastroButton = new JButton("Mostrar shape");
+        cadastroButton.addActionListener(e -> showShapeWindow(cadastro));
+
+        JPanel cardPanel = new JPanel(new BorderLayout());
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        JLabel infoLabel = new JLabel(
+                "<html>Id: " + cadastro.getId() +
+                        "<br>Proprietário: " + cadastro.getOwner() +
+                        "<br>Área: " + cadastro.getArea() +
+                        "<br>Comprimento: " + cadastro.getLength() + "</html>");
+
+        cardPanel.add(infoLabel, BorderLayout.CENTER);
+        cardPanel.add(cadastroButton, BorderLayout.SOUTH);
+        cardPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+        // Add cardPanel to resultsPanel (don't revalidate/repaint yet)
+        resultsPanel.add(cardPanel);
+        resultsPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espaço entre itens
+
+        // Instead of calling revalidate and repaint after each result, we will do it once after a batch of results
+        if (cadastrosResultPointer % DEFAULT_CADASTROS_LOAD == 0) {
+            resultsPanel.revalidate(); // Revalidate once all results are added
+            resultsPanel.repaint(); // Redraw after the update
+        }
+    }
+
 
     private void showShapeWindow(Cadastro cadastro) {
         JFrame shapeFrame = new JFrame("Visualização da Shape - ID: " + cadastro.getId());
@@ -126,24 +214,5 @@ public class MapaGUI extends JFrame {
         shapeFrame.add(shapePanel);
 
         shapeFrame.setVisible(true);
-    }
-
-    private void viewPropertiesMap(ActionEvent e) {
-        if (cadastros == null || cadastros.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Por favor, importe os dados CSV primeiro.",
-                    "Aviso",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        JFrame mapFrame = new JFrame("Mapa de Propriedades");
-        mapFrame.setSize(1200, 800);
-        mapFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        MapPanel mapPanel = new MapPanel(cadastros);
-        mapFrame.add(new JScrollPane(mapPanel));
-
-        mapFrame.setVisible(true);
     }
 }

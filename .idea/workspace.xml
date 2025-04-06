@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77544ef0-b9dd-4be9-8124-363db0ed3e0e" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change afterPath="$PROJECT_DIR$/src/main/java/gui/Main.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/gui/MapPanel.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/gui/MapaGUI.java" afterDir="false" />
@@ -125,6 +126,14 @@
       <change beforePath="$PROJECT_DIR$/javafx/lib/jfx.incubator.richtext.jar" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/javafx/src.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/graph/PropertyGraphTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/importer/CadastroTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/graph/PropertyGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cadastro/graph/PropertyGraph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/gui/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cadastro/gui/MainGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/gui/MapPanel.java" beforeDir="false" />
+>>>>>>> Stashed changes
       <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/importer/Cadastro.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cadastro/importer/Cadastro.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ui/Main.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ui/MapaController.java" beforeDir="false" />
@@ -139,14 +148,18 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit3 Test Class" />
         <option value="Class" />
+        <option value="JUnit3 Test Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -192,7 +205,11 @@
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="cadastro.importer" />
+      <recent name="cadastro.graph" />
       <recent name="" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="cadastro.graph" />
     </key>
   </component>
   <component name="SharedIndexes">
