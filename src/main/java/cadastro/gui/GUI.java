@@ -14,7 +14,7 @@ import java.util.List;
  * Esta classe estende JFrame e fornece uma interface para importar, visualizar e gerenciar
  * cadastros de propriedades a partir de arquivos CSV.
  * 
- * @author [Nome do Autor]
+ * @author [Lei-G]
  * @version 1.0
  */
 public class GUI extends JFrame {
@@ -64,6 +64,7 @@ public class GUI extends JFrame {
         showMore.addActionListener(this::moreResults);
 
         JScrollPane scrollPane = new JScrollPane(resultsPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         // Adiciona componentes ao frame
         add(filePanel, BorderLayout.NORTH);
@@ -222,7 +223,7 @@ public class GUI extends JFrame {
     private void showCadastroResult(Cadastro cadastro) {
         // Create components (don't immediately update the UI yet)
         JButton cadastroButton = new JButton("Mostrar shape");
-        cadastroButton.addActionListener(e -> showShapeWindow(cadastro));
+        cadastroButton.addActionListener(_ -> showShapeWindow(cadastro));
 
         JPanel cardPanel = new JPanel(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

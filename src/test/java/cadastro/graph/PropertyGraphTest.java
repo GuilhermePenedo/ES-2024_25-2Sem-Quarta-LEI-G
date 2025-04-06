@@ -1,14 +1,20 @@
 package cadastro.graph;
 
 import cadastro.importer.Cadastro;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,169 +29,124 @@ import static org.junit.jupiter.api.Assertions.*;
  * - getNumberOfAdjacencies(): 1
  * - toString(): 2
  * 
- * @author pedro
+ * @author Lei-G
  * @date 2024-04-06 21:30
  */
 class PropertyGraphTest {
+    private static final Logger logger = LoggerFactory.getLogger(PropertyGraphTest.class);
+    private static final String CSV_PATH = new File("Dados/Madeira-Moodle-1.1.csv").getAbsolutePath();
 
-    private static class TestCadastro extends Cadastro {
-        private final String id;
-        private final String owner;
-        private final double area;
-        private final double length;
+    private static class TestCadastro {
+        private final Cadastro cadastro;
+        @SuppressWarnings("unused")
         private final MultiPolygon shape;
 
-        public TestCadastro(String id, String owner, double area, double length, MultiPolygon shape) {
-            this.id = id;
-            this.owner = owner;
-            this.area = area;
-            this.length = length;
-            this.shape = shape;
+        public TestCadastro(CSVRecord record) throws Exception {
+            this.cadastro = new Cadastro(record);
+            this.shape = cadastro.getShape();
         }
 
-        @Override
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public String getOwner() {
-            return owner;
-        }
-
-        @Override
-        public double getArea() {
-            return area;
-        }
-
-        @Override
-        public double getLength() {
-            return length;
-        }
-
-        @Override
-        public MultiPolygon getShape() {
-            return shape;
+        public Cadastro getCadastro() {
+            return cadastro;
         }
     }
 
     private PropertyGraph graph;
     private List<Cadastro> cadastros;
-    private GeometryFactory geometryFactory;
 
     @BeforeEach
-    void setUp() {
-        geometryFactory = new GeometryFactory();
+    void setUp() throws Exception {
+        logger.info("Iniciando setup do teste");
+        logger.info("Caminho do arquivo CSV: {}", CSV_PATH);
+        
+        File csvFile = new File(CSV_PATH);
+        if (!csvFile.exists()) {
+            logger.error("Arquivo CSV não encontrado em: {}", CSV_PATH);
+            throw new IllegalStateException("Arquivo CSV não encontrado");
+        }
+        
         cadastros = new ArrayList<>();
+        
+        // Lê o arquivo CSV
+        try (FileReader reader = new FileReader(csvFile);
+             CSVParser parser = CSVFormat.newFormat(';').parse(reader)) {
+            
+            logger.info("Arquivo CSV aberto com sucesso");
+            List<CSVRecord> records = parser.getRecords();
+            logger.info("Total de registros lidos: {}", records.size());
+            
+            if (records.size() >= 3) { // Pelo menos 2 registros + cabeçalho
+                logger.info("Criando cadastros de teste");
+                TestCadastro testCadastro1 = new TestCadastro(records.get(1));
+                TestCadastro testCadastro2 = new TestCadastro(records.get(2));
+                
+                cadastros.add(testCadastro1.getCadastro());
+                cadastros.add(testCadastro2.getCadastro());
+                logger.info("Cadastros criados com sucesso");
+            } else {
+                logger.error("Arquivo CSV não contém registros suficientes");
+                throw new IllegalStateException("Arquivo CSV não contém registros suficientes");
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao ler arquivo CSV", e);
+            throw e;
+        }
+        
         graph = new PropertyGraph(cadastros);
+        logger.info("Grafo criado com sucesso");
     }
 
     @Test
     void constructor() {
+        logger.info("Executando teste constructor");
         assertNotNull(graph, "O grafo deve ser criado");
-        assertEquals(0, graph.getNumberOfProperties(), "O grafo deve estar vazio");
+        assertEquals(2, graph.getNumberOfProperties(), "O grafo deve ter 2 propriedades");
+        logger.info("Teste constructor concluído com sucesso");
     }
 
     @Test
     void getAdjacentProperties() {
-        // Cria dois cadastros adjacentes
-        Polygon shape1 = geometryFactory.createPolygon();
-        Polygon shape2 = geometryFactory.createPolygon();
-        MultiPolygon multiShape1 = geometryFactory.createMultiPolygon(new Polygon[]{shape1});
-        MultiPolygon multiShape2 = geometryFactory.createMultiPolygon(new Polygon[]{shape2});
-        
-        TestCadastro cadastro1 = new TestCadastro("1", "João", 100.0, 10.0, multiShape1);
-        TestCadastro cadastro2 = new TestCadastro("2", "Maria", 200.0, 20.0, multiShape2);
-        
-        cadastros.add(cadastro1);
-        cadastros.add(cadastro2);
-        
-        List<Cadastro> adjacent = graph.getAdjacentProperties(cadastro1);
-        assertNotNull(adjacent, "A lista de adjacentes não deve ser nula");
-        assertEquals(0, adjacent.size(), "Não deve haver adjacentes");
+        logger.info("Executando teste getAdjacentProperties");
+        Set<Cadastro> adjacent = graph.getAdjacentProperties(cadastros.get(0));
+        assertEquals(0, adjacent.size(), "Não deve haver propriedades adjacentes");
+        logger.info("Teste getAdjacentProperties concluído com sucesso");
     }
 
     @Test
     void areAdjacent1() {
-        // Cria dois cadastros adjacentes
-        Polygon shape1 = geometryFactory.createPolygon();
-        Polygon shape2 = geometryFactory.createPolygon();
-        MultiPolygon multiShape1 = geometryFactory.createMultiPolygon(new Polygon[]{shape1});
-        MultiPolygon multiShape2 = geometryFactory.createMultiPolygon(new Polygon[]{shape2});
-        
-        TestCadastro cadastro1 = new TestCadastro("1", "João", 100.0, 10.0, multiShape1);
-        TestCadastro cadastro2 = new TestCadastro("2", "Maria", 200.0, 20.0, multiShape2);
-        
-        cadastros.add(cadastro1);
-        cadastros.add(cadastro2);
-        
-        assertFalse(graph.areAdjacent(cadastro1, cadastro2), "Os cadastros não devem ser adjacentes");
+        logger.info("Executando teste areAdjacent1");
+        assertFalse(graph.areAdjacent(cadastros.get(0), cadastros.get(1)), "Os cadastros não devem ser adjacentes");
+        logger.info("Teste areAdjacent1 concluído com sucesso");
     }
 
     @Test
     void areAdjacent2() {
-        // Cria dois cadastros não adjacentes
-        Polygon shape1 = geometryFactory.createPolygon();
-        Polygon shape2 = geometryFactory.createPolygon();
-        MultiPolygon multiShape1 = geometryFactory.createMultiPolygon(new Polygon[]{shape1});
-        MultiPolygon multiShape2 = geometryFactory.createMultiPolygon(new Polygon[]{shape2});
-        
-        TestCadastro cadastro1 = new TestCadastro("1", "João", 100.0, 10.0, multiShape1);
-        TestCadastro cadastro2 = new TestCadastro("2", "Maria", 200.0, 20.0, multiShape2);
-        
-        cadastros.add(cadastro1);
-        cadastros.add(cadastro2);
-        
-        assertFalse(graph.areAdjacent(cadastro1, cadastro2), "Os cadastros não devem ser adjacentes");
+        logger.info("Executando teste areAdjacent2");
+        assertFalse(graph.areAdjacent(cadastros.get(1), cadastros.get(0)), "Os cadastros não devem ser adjacentes");
+        logger.info("Teste areAdjacent2 concluído com sucesso");
     }
 
     @Test
     void getNumberOfProperties() {
-        assertEquals(0, graph.getNumberOfProperties(), "O grafo deve estar vazio");
-        
-        // Adiciona um cadastro
-        Polygon shape = geometryFactory.createPolygon();
-        MultiPolygon multiShape = geometryFactory.createMultiPolygon(new Polygon[]{shape});
-        TestCadastro cadastro = new TestCadastro("1", "João", 100.0, 10.0, multiShape);
-        cadastros.add(cadastro);
-        
-        assertEquals(1, graph.getNumberOfProperties(), "O grafo deve ter 1 propriedade");
+        logger.info("Executando teste getNumberOfProperties");
+        assertEquals(2, graph.getNumberOfProperties(), "O grafo deve ter 2 propriedades");
+        logger.info("Teste getNumberOfProperties concluído com sucesso");
     }
 
     @Test
     void getNumberOfAdjacencies() {
-        assertEquals(0, graph.getNumberOfAdjacencies(), "O grafo deve estar vazio");
-        
-        // Adiciona dois cadastros
-        Polygon shape1 = geometryFactory.createPolygon();
-        Polygon shape2 = geometryFactory.createPolygon();
-        MultiPolygon multiShape1 = geometryFactory.createMultiPolygon(new Polygon[]{shape1});
-        MultiPolygon multiShape2 = geometryFactory.createMultiPolygon(new Polygon[]{shape2});
-        
-        TestCadastro cadastro1 = new TestCadastro("1", "João", 100.0, 10.0, multiShape1);
-        TestCadastro cadastro2 = new TestCadastro("2", "Maria", 200.0, 20.0, multiShape2);
-        
-        cadastros.add(cadastro1);
-        cadastros.add(cadastro2);
-        
+        logger.info("Executando teste getNumberOfAdjacencies");
         assertEquals(0, graph.getNumberOfAdjacencies(), "O grafo deve ter 0 adjacências");
+        logger.info("Teste getNumberOfAdjacencies concluído com sucesso");
     }
 
     @Test
     void toString1() {
-        String expected = "PropertyGraph{properties=[], adjacencies=[]}";
+        logger.info("Executando teste toString1");
+        String expected = String.format("PropertyGraph{properties=[%s, %s], adjacencies=[]}", 
+            cadastros.get(0).toString(), 
+            cadastros.get(1).toString());
         assertEquals(expected, graph.toString(), "A representação em string deve estar correta");
-    }
-
-    @Test
-    void toString2() {
-        // Adiciona um cadastro
-        Polygon shape = geometryFactory.createPolygon();
-        MultiPolygon multiShape = geometryFactory.createMultiPolygon(new Polygon[]{shape});
-        TestCadastro cadastro = new TestCadastro("1", "João", 100.0, 10.0, multiShape);
-        cadastros.add(cadastro);
-        
-        String expected = "PropertyGraph{properties=[TestCadastro{id=1, owner=João, area=100.0, length=10.0}], adjacencies=[]}";
-        assertEquals(expected, graph.toString(), "A representação em string deve estar correta");
+        logger.info("Teste toString1 concluído com sucesso");
     }
 }

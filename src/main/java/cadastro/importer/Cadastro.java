@@ -50,7 +50,7 @@ public class Cadastro {
      * @throws ParseException Se houver erro ao processar a geometria WKT
      * @throws IllegalArgumentException Se houver erro ao converter valores numéricos
      */
-    Cadastro(CSVRecord record) throws ParseException {
+    public Cadastro(CSVRecord record) throws ParseException {
         logger.debug("Iniciando criação de cadastro a partir do registro: {}", record);
         try {
             this.id = Integer.parseInt(record.get(0));

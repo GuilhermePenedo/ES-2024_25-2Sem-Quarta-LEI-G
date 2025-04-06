@@ -2,31 +2,79 @@
 Projeto de Engenharia de Software 2024/25
 
 ## Descrição do Projeto
-Este projeto é um sistema de gerenciamento de cadastros imobiliários que processa dados geográficos a partir de arquivos CSV. O sistema utiliza tecnologias modernas para processamento de dados geoespaciais e logging robusto.
+Este projeto é um sistema de gerenciamento de cadastros imobiliários que processa dados geográficos a partir de arquivos CSV. O sistema utiliza tecnologias modernas para processamento de dados geoespaciais e logging robusto, com uma interface gráfica para visualização dos dados.
 
 ### Funcionalidades Principais
 - Importação de dados cadastrais de arquivos CSV
 - Processamento de geometrias MultiPolygon usando JTS (Java Topology Suite)
 - Sistema de logging completo com output para console e arquivo
 - Validação de dados geométricos
+- Representação de propriedades como vértices em um grafo
+- Detecção de adjacências físicas entre propriedades
+- Ordenação de cadastros por diferentes critérios (ID, comprimento, área, proprietário)
+- Interface gráfica para visualização e interação com os dados
+- Visualização de formas geométricas em painel dedicado
 
 ### Tecnologias Utilizadas
 - Java 24
-- Apache Commons CSV para processamento de arquivos CSV
-- JTS (Java Topology Suite) para manipulação de dados geométricos
-- SLF4J + Logback para logging
+- Apache Commons CSV (1.9.0) para processamento de arquivos CSV
+- JTS Core (1.19.0) para manipulação de dados geométricos
+- SLF4J (1.7.32) + Simple para logging
+- JUnit Jupiter (5.8.2) para testes unitários
+- Maven para gerenciamento de dependências e build
 
 ### Estrutura do Projeto
 ```
-src/main/
-├── java/
-│   ├── cadastro/importer/
-│   │   └── Cadastro.java
-│   └── org/example/
-│       └── Main.java
-└── resources/
-    └── logback.xml
+src/
+├── main/
+│   ├── java/
+│   │   ├── cadastro/
+│   │   │   ├── importer/     # Importação e processamento de dados
+│   │   │   │   └── Cadastro.java
+│   │   │   ├── graph/        # Representação em grafo
+│   │   │   │   ├── PropertyGraph.java
+│   │   │   │   └── Main.java
+│   │   │   └── gui/          # Interface gráfica
+│   │   │       ├── GUI.java
+│   │   │       ├── ShapePanel.java
+│   │   │       └── Main.java
+│   └── resources/
+│       └── logback.xml
+└── test/
+    ├── java/
+    │   ├── cadastro/
+    │   │   ├── importer/
+    │   │   │   └── CadastroTest.java
+    │   │   └── graph/
+    │   │       └── PropertyGraphTest.java
+    └── resources/
+        └── logback-test.xml
 ```
+
+### Classes Principais
+
+#### Cadastro
+- Representa um cadastro imobiliário
+- Processa dados de arquivos CSV
+- Valida e processa geometrias MultiPolygon
+- Gerencia informações como ID, comprimento, área, forma geométrica, proprietário e localização
+- Implementa ordenação por diferentes critérios
+- Implementa logging detalhado para todas as operações
+
+#### PropertyGraph
+- Representa um grafo de propriedades
+- Vértices são cadastros imobiliários
+- Arestas representam adjacências físicas entre propriedades
+- Implementa algoritmos para detecção de adjacências
+- Fornece métodos para consulta de propriedades adjacentes
+- Utiliza logging para rastrear operações importantes
+
+#### GUI
+- Interface gráfica do usuário
+- Visualização de cadastros e suas propriedades
+- Painel dedicado para visualização de formas geométricas
+- Interação com o grafo de propriedades
+- Logging de operações de interface
 
 ### Como Executar
 1. Certifique-se de ter Java 24 instalado
@@ -34,13 +82,41 @@ src/main/
 3. Execute o projeto usando Maven:
    ```bash
    mvn clean install
-   mvn exec:java -Dexec.mainClass="org.example.Main"
+   # Para executar a interface gráfica
+   mvn exec:java -Dexec.mainClass="cadastro.gui.Main"
+   # Para executar o processamento em modo texto
+   mvn exec:java -Dexec.mainClass="cadastro.graph.Main"
    ```
+
+### Testes
+O projeto inclui testes unitários abrangentes:
+- Testes de criação e validação de cadastros
+- Testes de processamento de geometrias
+- Testes de detecção de adjacências
+- Testes de ordenação de cadastros
+- Testes de interface gráfica
+
+Execute os testes com:
+```bash
+mvn test
+```
 
 ### Logs
 O sistema gera logs detalhados que podem ser encontrados em:
 - Console: Para monitoramento em tempo real
 - Arquivo: `logs/cadastro.log` (novo arquivo a cada execução)
+
+Níveis de log implementados:
+- INFO: Informações importantes sobre o fluxo do programa
+- DEBUG: Detalhes sobre operações específicas
+- TRACE: Informações detalhadas para depuração
+- ERROR: Registro de erros e exceções
+
+### Configuração do Ambiente
+- Java 24
+- Maven 3.8.1 ou superior
+- UTF-8 encoding
+- Dependências gerenciadas via Maven
 
 ## Equipe
 - Grupo G

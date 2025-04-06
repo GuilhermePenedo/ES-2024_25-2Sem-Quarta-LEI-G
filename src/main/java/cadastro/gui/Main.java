@@ -4,7 +4,7 @@ package cadastro.gui;
  * Classe principal que serve como ponto de entrada da aplicação.
  * Inicializa a interface gráfica e a torna visível.
  * 
- * @author [Nome do Autor]
+ * @author [Lei-G]
  * @version 1.0
  */
 public class Main {

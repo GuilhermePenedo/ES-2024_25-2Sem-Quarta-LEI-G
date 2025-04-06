@@ -11,7 +11,7 @@ import java.util.List;
  * Carrega cadastros de um arquivo CSV e constrói um grafo
  * representando as adjacências entre as propriedades.
  * 
- * @author [Nome do Autor]
+ * @author [Lei-G]
  * @version 1.0
  */
 public class Main {

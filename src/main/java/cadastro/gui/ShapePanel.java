@@ -13,7 +13,7 @@ import java.awt.geom.Path2D;
  * Utiliza a biblioteca JTS para manipular dados geométricos e realiza
  * renderização personalizada.
  * 
- * @author [Nome do Autor]
+ * @author [Lei-G]
  * @version 1.0
  */
 public class ShapePanel extends JPanel {
