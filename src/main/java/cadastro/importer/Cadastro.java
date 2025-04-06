@@ -18,12 +18,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-<<<<<<< Updated upstream
-public class Cadastro {
-=======
+
 public class Cadastro{
     private static final Logger logger = LoggerFactory.getLogger(Cadastro.class);
->>>>>>> Stashed changes
 
     public static final int SORT_BY_ID = 0;
     public static final int SORT_BY_LENGTH = 1;

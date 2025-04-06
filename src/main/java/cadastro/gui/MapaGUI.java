@@ -1,4 +1,4 @@
-package gui;
+package cadastro.gui;
 
 import cadastro.importer.Cadastro;
 
@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
