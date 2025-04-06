@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AnalysisUIOptions">
-    <option name="SCOPE_TYPE" value="3" />
-  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77544ef0-b9dd-4be9-8124-363db0ed3e0e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/graph/MainTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/graph/PropertyGraphTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/gui/GUITest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/gui/MainTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/gui/ShapePanelTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cadastro/importer/CadastroTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit3 Test Class" />
         <option value="Class" />
+        <option value="JUnit3 Test Class" />
       </list>
     </option>
   </component>
