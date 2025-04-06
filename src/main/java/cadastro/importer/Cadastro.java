@@ -17,12 +17,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Classe que representa um cadastro de propriedade, contendo informações como
+ * identificador, comprimento, área, forma geométrica, proprietário e localização.
+ * 
+ * @author [Lei-G]
+ * @version 1.0
+ */
 public class Cadastro {
     private static final Logger logger = LoggerFactory.getLogger(Cadastro.class);
 
+    /** Constante para ordenação por ID */
     public static final int SORT_BY_ID = 0;
+    /** Constante para ordenação por comprimento */
     public static final int SORT_BY_LENGTH = 1;
+    /** Constante para ordenação por área */
     public static final int SORT_BY_AREA = 2;
+    /** Constante para ordenação por proprietário */
     public static final int SORT_BY_OWNER = 3;
 
     private final int id;
@@ -32,6 +43,13 @@ public class Cadastro {
     private final int owner;
     private final List<String> location;
 
+    /**
+     * Constrói um objeto Cadastro a partir de um registro CSV.
+     * 
+     * @param record O registro CSV contendo os dados do cadastro
+     * @throws ParseException Se houver erro ao processar a geometria WKT
+     * @throws IllegalArgumentException Se houver erro ao converter valores numéricos
+     */
     Cadastro(CSVRecord record) throws ParseException {
         logger.debug("Iniciando criação de cadastro a partir do registro: {}", record);
         try {
@@ -60,6 +78,14 @@ public class Cadastro {
         }
     }
 
+    /**
+     * Processa a string WKT (Well-Known Text) para criar um objeto MultiPolygon.
+     * 
+     * @param record A string WKT contendo a geometria
+     * @return O objeto MultiPolygon correspondente
+     * @throws ParseException Se houver erro ao processar a geometria
+     * @throws IllegalArgumentException Se a geometria não for um MultiPolygon
+     */
     private MultiPolygon handleShape(String record) throws ParseException {
         logger.debug("Processando geometria WKT: {}", record);
         try {
@@ -79,6 +105,12 @@ public class Cadastro {
         }
     }
 
+    /**
+     * Processa as localizações do registro CSV, removendo valores "NA".
+     * 
+     * @param record O registro CSV contendo as localizações
+     * @return Lista de localizações processadas
+     */
     private List<String> handleLocation(CSVRecord record) {
         logger.debug("Processando localizações do registro");
         List<String> locations = record.stream()
@@ -89,6 +121,13 @@ public class Cadastro {
         return locations;
     }
 
+    /**
+     * Lê um arquivo CSV e retorna uma lista de cadastros.
+     * 
+     * @param path O caminho do arquivo CSV
+     * @return Lista de cadastros lidos do arquivo
+     * @throws Exception Se houver erro ao ler ou processar o arquivo
+     */
     public static List<Cadastro> getCadastros(String path) throws Exception {
         List<Cadastro> cadastros = new ArrayList<>();
         logger.info("Iniciando leitura do arquivo CSV: {}", path);
@@ -110,6 +149,14 @@ public class Cadastro {
         }
     }
 
+    /**
+     * Ordena uma lista de cadastros de acordo com o critério especificado.
+     * 
+     * @param cadastros A lista de cadastros a ser ordenada
+     * @param sortType O tipo de ordenação (ID, comprimento, área ou proprietário)
+     * @return A lista de cadastros ordenada
+     * @throws Exception Se o tipo de ordenação for inválido
+     */
     public static List<Cadastro> sortCadastros(List<Cadastro> cadastros, int sortType) throws Exception {
         switch (sortType){
             case SORT_BY_ID:
@@ -128,6 +175,11 @@ public class Cadastro {
         return cadastros;
     }
 
+    /**
+     * Retorna uma representação em string do cadastro.
+     * 
+     * @return String contendo os dados do cadastro
+     */
     @Override
     public String toString() {
         return "Cadastro{" +
@@ -140,26 +192,56 @@ public class Cadastro {
                 '}';
     }
 
+    /**
+     * Retorna o ID do cadastro.
+     * 
+     * @return O ID do cadastro
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Retorna o comprimento do cadastro.
+     * 
+     * @return O comprimento do cadastro
+     */
     public double getLength() {
         return length;
     }
 
+    /**
+     * Retorna a área do cadastro.
+     * 
+     * @return A área do cadastro
+     */
     public double getArea() {
         return area;
     }
 
+    /**
+     * Retorna a forma geométrica do cadastro.
+     * 
+     * @return O objeto MultiPolygon representando a forma
+     */
     public MultiPolygon getShape() {
         return shape;
     }
 
+    /**
+     * Retorna o ID do proprietário do cadastro.
+     * 
+     * @return O ID do proprietário
+     */
     public int getOwner() {
         return owner;
     }
 
+    /**
+     * Retorna a lista de localizações do cadastro.
+     * 
+     * @return Lista de localizações
+     */
     public List<String> getLocation() {
         return location;
     }

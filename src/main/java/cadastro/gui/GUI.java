@@ -9,6 +9,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe que implementa a interface gráfica do sistema de gestão de propriedades.
+ * Esta classe estende JFrame e fornece uma interface para importar, visualizar e gerenciar
+ * cadastros de propriedades a partir de arquivos CSV.
+ * 
+ * @author [Nome do Autor]
+ * @version 1.0
+ */
 public class GUI extends JFrame {
 
     private static final int DEFAULT_CADASTROS_LOAD = 5000;
@@ -22,6 +30,11 @@ public class GUI extends JFrame {
     private final List<JButton> sortButtons = new ArrayList<>();
     private List<Cadastro> cadastros;
 
+    /**
+     * Construtor da classe GUI.
+     * Inicializa a interface gráfica com todos os componentes necessários,
+     * incluindo campos para seleção de arquivo, botões de ação e painéis de resultados.
+     */
     public GUI() {
         setTitle("Gestão de Propriedades");
         setSize(800, 600);
@@ -61,6 +74,11 @@ public class GUI extends JFrame {
         importButton.addActionListener(this::importCadastros);
     }
 
+    /**
+     * Abre um diálogo para seleção de arquivo CSV.
+     * 
+     * @param e O evento de ação que disparou o método
+     */
     private void browseFile(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -73,6 +91,12 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Importa cadastros a partir do arquivo CSV selecionado.
+     * Exibe mensagens de erro caso ocorra algum problema durante a importação.
+     * 
+     * @param e O evento de ação que disparou o método
+     */
     private void importCadastros(ActionEvent e) {
         String path = csvPathInput.getText();
         if (path.isEmpty()) {
@@ -111,6 +135,12 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Ordena os resultados de acordo com o critério especificado.
+     * 
+     * @param e O evento de ação que disparou o método
+     * @param sortType O tipo de ordenação a ser aplicada (ID, comprimento, área ou proprietário)
+     */
     private void sortResults(ActionEvent e, int sortType) {
         try {
             cadastros = Cadastro.sortCadastros(cadastros, sortType);
@@ -124,6 +154,10 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Exibe os resultados dos cadastros importados na interface.
+     * Inclui botões de ordenação e os primeiros resultados.
+     */
     private void displayResults() {
         resultsPanel.removeAll(); // Limpa resultados anteriores
 
@@ -143,6 +177,11 @@ public class GUI extends JFrame {
         resultsPanel.repaint();
     }
 
+    /**
+     * Carrega e exibe mais resultados quando o usuário clica no botão "Mais".
+     * 
+     * @param e O evento de ação que disparou o método
+     */
     private void moreResults(ActionEvent e) {
         int toLoad = cadastrosResultPointer + DEFAULT_CADASTROS_LOAD;
         if (toLoad > cadastros.size()) {
@@ -159,8 +198,10 @@ public class GUI extends JFrame {
         resultsPanel.repaint();
     }
 
-
-
+    /**
+     * Adiciona um lote de resultados ao painel de visualização.
+     * O número de resultados carregados é limitado por DEFAULT_CADASTROS_LOAD.
+     */
     private void addResults() {
         // Calculate how many to load
         int toLoad = Math.min(cadastrosResultPointer + DEFAULT_CADASTROS_LOAD, cadastros.size());
@@ -173,6 +214,11 @@ public class GUI extends JFrame {
         cadastrosResultPointer = toLoad;
     }
 
+    /**
+     * Exibe as informações de um cadastro específico no painel de resultados.
+     * 
+     * @param cadastro O objeto Cadastro a ser exibido
+     */
     private void showCadastroResult(Cadastro cadastro) {
         // Create components (don't immediately update the UI yet)
         JButton cadastroButton = new JButton("Mostrar shape");
@@ -202,7 +248,11 @@ public class GUI extends JFrame {
         }
     }
 
-
+    /**
+     * Abre uma nova janela para visualização da forma geométrica do cadastro.
+     * 
+     * @param cadastro O objeto Cadastro cuja forma será exibida
+     */
     private void showShapeWindow(Cadastro cadastro) {
         JFrame shapeFrame = new JFrame("Visualização da Shape - ID: " + cadastro.getId());
         shapeFrame.setSize(500, 500);

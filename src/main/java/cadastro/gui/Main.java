@@ -1,14 +1,17 @@
 package cadastro.gui;
 
 /**
- * The Main class serves as the entry point for the application.
- * It initializes the GUI and makes it visible.
+ * Classe principal que serve como ponto de entrada da aplicação.
+ * Inicializa a interface gráfica e a torna visível.
+ * 
+ * @author [Nome do Autor]
+ * @version 1.0
  */
 public class Main {
     /**
-     * The main method which starts the application.
+     * Método principal que inicia a aplicação.
      *
-     * @param args Command line arguments (not used).
+     * @param args Argumentos da linha de comando (não utilizados)
      */
     public static void main(String[] args) {
         GUI visualizador = new GUI();

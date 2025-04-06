@@ -9,16 +9,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
 /**
- * The ShapePanel class is responsible for rendering geometric shapes on a JPanel.
- * It uses the JTS library to handle geometric data and performs custom rendering.
+ * Painel responsável por renderizar formas geométricas em um JPanel.
+ * Utiliza a biblioteca JTS para manipular dados geométricos e realiza
+ * renderização personalizada.
+ * 
+ * @author [Nome do Autor]
+ * @version 1.0
  */
 public class ShapePanel extends JPanel {
     private final Geometry geometry;
 
     /**
-     * Constructs a ShapePanel with the specified geometry.
+     * Constrói um ShapePanel com a geometria especificada.
      *
-     * @param geometry The geometric shape to be rendered.
+     * @param geometry A forma geométrica a ser renderizada
      */
     public ShapePanel(Geometry geometry) {
         this.geometry = geometry;
@@ -26,9 +30,11 @@ public class ShapePanel extends JPanel {
     }
 
     /**
-     * Paints the component, rendering the geometric shape.
+     * Pinta o componente, renderizando a forma geométrica.
+     * Aplica transformações para centralizar e dimensionar a forma
+     * adequadamente no painel.
      *
-     * @param g The Graphics object used for painting.
+     * @param g O objeto Graphics usado para pintura
      */
     @Override
     protected void paintComponent(Graphics g) {
@@ -41,9 +47,10 @@ public class ShapePanel extends JPanel {
     }
 
     /**
-     * Calculates the transformation needed to center and scale the shape.
+     * Calcula a transformação necessária para centralizar e dimensionar a forma.
+     * A transformação inclui translação, escala e inversão do eixo Y.
      *
-     * @return The AffineTransform object representing the transformation.
+     * @return O objeto AffineTransform representando a transformação
      */
     private AffineTransform calculateTransform() {
         double minX = geometry.getEnvelopeInternal().getMinX();
@@ -64,10 +71,11 @@ public class ShapePanel extends JPanel {
     }
 
     /**
-     * Draws the geometry on the Graphics2D object.
+     * Desenha a geometria no objeto Graphics2D.
+     * Suporta MultiPolygon e Polygon.
      *
-     * @param g2d The Graphics2D object used for drawing.
-     * @param geom The geometry to be drawn.
+     * @param g2d O objeto Graphics2D usado para desenho
+     * @param geom A geometria a ser desenhada
      */
     private void drawGeometry(Graphics2D g2d, Geometry geom) {
         if (geom instanceof MultiPolygon multiPolygon) {
@@ -81,10 +89,13 @@ public class ShapePanel extends JPanel {
     }
 
     /**
-     * Draws a polygon on the Graphics2D object.
+     * Desenha um polígono no objeto Graphics2D.
+     * O polígono é preenchido com uma cor azul semi-transparente
+     * e contornado em azul. Os buracos são preenchidos com a cor
+     * de fundo e contornados em vermelho.
      *
-     * @param g2d The Graphics2D object used for drawing.
-     * @param polygon The polygon to be drawn.
+     * @param g2d O objeto Graphics2D usado para desenho
+     * @param polygon O polígono a ser desenhado
      */
     private void drawPolygon(Graphics2D g2d, Polygon polygon) {
         Path2D path = toPath2D(polygon.getExteriorRing());
@@ -102,10 +113,11 @@ public class ShapePanel extends JPanel {
     }
 
     /**
-     * Converts a Geometry object to a Path2D object.
+     * Converte um objeto Geometry para um objeto Path2D.
+     * Cria um caminho fechado a partir das coordenadas da geometria.
      *
-     * @param geometry The geometry to be converted.
-     * @return The Path2D object representing the geometry.
+     * @param geometry A geometria a ser convertida
+     * @return O objeto Path2D representando a geometria
      */
     private Path2D toPath2D(Geometry geometry) {
         Path2D path = new Path2D.Double();
