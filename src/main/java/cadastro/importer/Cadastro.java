@@ -10,14 +10,24 @@ import org.locationtech.jts.io.WKTReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class Cadastro {
+
+public class Cadastro{
     private static final Logger logger = LoggerFactory.getLogger(Cadastro.class);
+
+    public static final int SORT_BY_ID = 0;
+    public static final int SORT_BY_LENGTH = 1;
+    public static final int SORT_BY_AREA = 2;
+    public static final int SORT_BY_OWNER = 3;
 
     private final int id;
     private final double length;
@@ -104,6 +114,24 @@ public class Cadastro {
         }
     }
 
+    public static List<Cadastro> sortCadastros(List<Cadastro> cadastros, int sortType) throws Exception {
+        switch (sortType){
+            case SORT_BY_ID:
+                cadastros.sort(Comparator.comparingInt(Cadastro::getId));
+                break;
+            case SORT_BY_LENGTH:
+                cadastros.sort(Comparator.comparingDouble(Cadastro::getLength));
+                break;
+            case SORT_BY_AREA:
+                cadastros.sort(Comparator.comparingDouble(Cadastro::getArea));
+                break;
+            case SORT_BY_OWNER:
+                cadastros.sort(Comparator.comparingInt(Cadastro::getOwner));
+                break;
+        }
+        return cadastros;
+    }
+
     @Override
     public String toString() {
         return "Cadastro{" +
@@ -139,4 +167,5 @@ public class Cadastro {
     public List<String> getLocation() {
         return location;
     }
+
 }
