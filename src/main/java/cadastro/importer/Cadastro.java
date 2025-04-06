@@ -52,14 +52,9 @@ public class Cadastro {
         try (Reader in = new FileReader(path);
              CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
 
-            boolean isFirstRow = true;
-            for (CSVRecord record : parser) {
-                //Ignora o header
-                if (isFirstRow) {
-                    isFirstRow = false;
-                    continue;
-                }
-                cadastros.add(new Cadastro(record));
+            List<CSVRecord> records = parser.getRecords();
+            for(int i = 1; i < records.size(); i++) {
+                cadastros.add(new Cadastro(records.get(i)));
             }
             return cadastros;
         } catch (IOException e) {
