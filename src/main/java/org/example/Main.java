@@ -1,6 +1,7 @@
 package org.example;
 
 import cadastro.importer.Cadastro;
+import cadastro.graph.PropertyGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,9 @@ public class Main {
         List<Cadastro> cadastros = Cadastro.getCadastros(filePath);
         logger.info("Total de cadastros carregados: {}", cadastros.size());
         
-        cadastros.forEach(cadastro -> logger.info("Cadastro: {}", cadastro));
+        // cadastros.forEach(cadastro -> logger.info("Cadastro: {}", cadastro));
+        PropertyGraph graph = new PropertyGraph(cadastros);
+        logger.info("Grafo de propriedades: {}", graph);
         
         logger.info("Aplicação finalizada com sucesso");
     }
