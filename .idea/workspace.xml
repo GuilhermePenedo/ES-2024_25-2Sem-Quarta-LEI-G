@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77544ef0-b9dd-4be9-8124-363db0ed3e0e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/gui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cadastro/gui/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cadastro/gui/ShapePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cadastro/gui/ShapePanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +50,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "ui",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/guipe/Documents/Iscte/3º Ano/PCD/PCD_project",
     "node.js.detected.package.eslint": "true",

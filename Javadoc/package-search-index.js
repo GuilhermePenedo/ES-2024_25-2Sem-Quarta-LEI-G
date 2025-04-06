@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"cadastro.gui"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"cadastro.graph"},{"l":"cadastro.gui"},{"l":"cadastro.importer"}];updateSearchResults();
