@@ -19,7 +19,8 @@ import java.util.List;
 
 /**
  * Classe que representa um cadastro de propriedade, contendo informações como
- * identificador, comprimento, área, forma geométrica, proprietário e localização.
+ * identificador, comprimento, área, forma geométrica, proprietário e
+ * localização.
  * 
  * @author [Lei-G]
  * @version 1.0
@@ -47,51 +48,94 @@ public class Cadastro {
      * Constrói um objeto Cadastro a partir de um registro CSV.
      * 
      * @param record O registro CSV contendo os dados do cadastro
-     * @throws ParseException Se houver erro ao processar a geometria WKT
-     * @throws IllegalArgumentException Se houver erro ao converter valores numéricos
+     * @throws ParseException           Se houver erro ao processar a geometria WKT
+     * @throws IllegalArgumentException Se houver erro ao converter valores
+     *                                  numéricos
      */
     public Cadastro(CSVRecord record) throws ParseException {
         logger.debug("Iniciando criação de cadastro a partir do registro: {}", record);
         try {
-            this.id = Integer.parseInt(record.get(0));
+
+            this.id = handleId(record.get(0));
             logger.trace("ID do cadastro: {}", this.id);
-            
-            // Validação do comprimento
-            String lengthStr = record.get(3);
-            if (lengthStr == null || lengthStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Comprimento não pode ser nulo ou vazio");
-            }
-            this.length = Double.parseDouble(lengthStr);
-            if (this.length <= 0) {
-                throw new IllegalArgumentException("Comprimento deve ser maior que zero");
-            }
+
+            this.length = handleLength(record.get(3));
             logger.trace("Comprimento do cadastro: {}", this.length);
-            
-            // Validação da área
-            String areaStr = record.get(4);
-            if (areaStr == null || areaStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Área não pode ser nula ou vazia");
-            }
-            this.area = Double.parseDouble(areaStr);
-            if (this.area <= 0) {
-                throw new IllegalArgumentException("Área deve ser maior que zero");
-            }
+
+            this.area = handleArea(record.get(4));
             logger.trace("Área do cadastro: {}", this.area);
-            
+
             this.shape = handleShape(record.get(5));
             logger.trace("Geometria processada com sucesso");
-            
-            this.owner = Integer.parseInt(record.get(6));
+
+            this.owner = handleOwner(record.get(6));
             logger.trace("Proprietário do cadastro: {}", this.owner);
-            
+
             this.location = handleLocation(record);
             logger.trace("Localizações processadas: {}", this.location);
-            
+
             logger.info("Cadastro {} criado com sucesso", this.id);
         } catch (NumberFormatException e) {
-            logger.error("Erro ao converter valores numéricos do registro: {}", record, e);
+            logger.error("Erro ao converter valores numéricos do registro: {}", record);
             throw new IllegalArgumentException("Erro ao converter valores numéricos", e);
         }
+    }
+
+    /**
+     * Verifica o campo id da propriedade.
+     * 
+     * @param record A string contendo a id
+     * @return O ID da propriedade do Cadastro correspondente
+     * @throws IllegalArgumentException Se o id for null ou se for menor ou igual
+     *                                  a zero
+     */
+    private int handleId(String idStr) {
+        if (idStr == null || idStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID não pode ser nulo ou vazio");
+        }
+        int id = Integer.parseInt(idStr);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID deve ser maior que zero");
+        }
+        return id;
+    }
+
+    /**
+     * Verifica o campo length da propriedade.
+     * 
+     * @param record A string contendo a length
+     * @return A Length da propriedade do Cadastro correspondente
+     * @throws IllegalArgumentException Se o comprimento for null ou se for menor ou
+     *                                  igual a zero
+     */
+    private double handleLength(String lengthStr) {
+        if (lengthStr == null || lengthStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("Comprimento não pode ser nulo ou vazio");
+        }
+        double length = Double.parseDouble(lengthStr);
+        if (length <= 0) {
+            throw new IllegalArgumentException("Comprimento deve ser maior que zero");
+        }
+        return length;
+    }
+
+        /**
+     * Verifica o campo area da propriedade.
+     * 
+     * @param record A string contendo a area
+     * @return A Área da propriedade do Cadastro correspondente
+     * @throws IllegalArgumentException Se a área for null ou se for menor ou igual
+     *                                  a zero
+     */
+    private double handleArea(String areaStr) {
+        if (areaStr == null || areaStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("Área não pode ser nula ou vazia");
+        }
+        double area = Double.parseDouble(areaStr);
+        if (area <= 0) {
+            throw new IllegalArgumentException("Área deve ser maior que zero");
+        }
+        return area;
     }
 
     /**
@@ -99,7 +143,7 @@ public class Cadastro {
      * 
      * @param record A string WKT contendo a geometria
      * @return O objeto MultiPolygon correspondente
-     * @throws ParseException Se houver erro ao processar a geometria
+     * @throws ParseException           Se houver erro ao processar a geometria
      * @throws IllegalArgumentException Se a geometria não for um MultiPolygon
      */
     private MultiPolygon handleShape(String record) throws ParseException {
@@ -116,9 +160,28 @@ public class Cadastro {
                 throw new IllegalArgumentException(errorMsg);
             }
         } catch (ParseException e) {
-            logger.error("Erro ao processar geometria WKT: {}", record, e);
+            logger.error("Erro ao processar geometria WKT: {}", record);
             throw e;
         }
+    }
+
+    /**
+     * Verifica o campo owner da propriedade.
+     * 
+     * @param record A string contendo a owner
+     * @return O Owner da propriedade do Cadastro correspondente
+     * @throws IllegalArgumentException Se o owner for null ou se for menor ou igual
+     *                                  a zero
+     */
+    private int handleOwner(String ownerStr) {
+        if (ownerStr == null || ownerStr.trim().isEmpty()) {
+            throw new IllegalArgumentException("Owner não pode ser nulo ou vazio");
+        }
+        int owner = Integer.parseInt(ownerStr);
+        if (owner <= 0) {
+            throw new IllegalArgumentException("Owner deve ser maior que zero");
+        }
+        return owner;
     }
 
     /**
@@ -149,13 +212,13 @@ public class Cadastro {
         logger.info("Iniciando leitura do arquivo CSV: {}", path);
 
         try (Reader in = new FileReader(path);
-             CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
+                CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
 
             List<CSVRecord> records = parser.getRecords();
             int totalRecords = records.size();
             int skippedRecords = 0;
-            
-            for(int i = 1; i < totalRecords; i++) {
+
+            for (int i = 1; i < totalRecords; i++) {
                 try {
                     Cadastro cadastro = new Cadastro(records.get(i));
                     cadastros.add(cadastro);
@@ -164,15 +227,16 @@ public class Cadastro {
                     logger.warn("Registro {} ignorado devido a erro: {}", i, e.getMessage());
                 }
             }
-            
-            logger.info("Processamento concluído. Total de registros: {}, Registros válidos: {}, Registros ignorados: {}", 
-                totalRecords - 1, cadastros.size(), skippedRecords);
-            
+
+            logger.info(
+                    "Processamento concluído. Total de registros: {}, Registros válidos: {}, Registros ignorados: {}",
+                    totalRecords - 1, cadastros.size(), skippedRecords);
+
             if (cadastros.isEmpty()) {
                 logger.error("Nenhum registro válido encontrado no arquivo");
                 throw new IllegalStateException("Nenhum registro válido encontrado no arquivo");
             }
-            
+
             return cadastros;
         } catch (IOException e) {
             logger.error("Erro ao ler o arquivo CSV: {}", path, e);
@@ -184,12 +248,12 @@ public class Cadastro {
      * Ordena uma lista de cadastros de acordo com o critério especificado.
      * 
      * @param cadastros A lista de cadastros a ser ordenada
-     * @param sortType O tipo de ordenação (ID, comprimento, área ou proprietário)
+     * @param sortType  O tipo de ordenação (ID, comprimento, área ou proprietário)
      * @return A lista de cadastros ordenada
      * @throws Exception Se o tipo de ordenação for inválido
      */
     public static List<Cadastro> sortCadastros(List<Cadastro> cadastros, int sortType) throws Exception {
-        switch (sortType){
+        switch (sortType) {
             case SORT_BY_ID:
                 cadastros.sort(Comparator.comparingInt(Cadastro::getId));
                 break;
