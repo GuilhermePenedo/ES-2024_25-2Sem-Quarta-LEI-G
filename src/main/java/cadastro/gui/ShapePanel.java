@@ -3,8 +3,6 @@ package cadastro.gui;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +18,7 @@ import java.awt.geom.Path2D;
  * @version 1.0
  */
 public class ShapePanel extends JPanel {
-    private static final Logger logger = LoggerFactory.getLogger(ShapePanel.class);
+    
     private final Geometry geometry;
 
     /**
@@ -31,12 +29,10 @@ public class ShapePanel extends JPanel {
      */
     public ShapePanel(Geometry geometry) {
         if (geometry == null) {
-            logger.error("Geometria não pode ser nula");
             throw new IllegalArgumentException("Geometria não pode ser nula");
         }
         this.geometry = geometry;
         setBackground(Color.WHITE);
-        logger.debug("ShapePanel criado com sucesso para geometria: {}", geometry);
     }
 
     /**
@@ -55,9 +51,7 @@ public class ShapePanel extends JPanel {
             AffineTransform transform = calculateTransform();
             g2d.transform(transform);
             drawGeometry(g2d, geometry);
-            logger.trace("Geometria renderizada com sucesso");
         } catch (Exception e) {
-            logger.error("Erro ao renderizar geometria: {}", e.getMessage());
             drawError(g);
         }
     }
@@ -110,7 +104,6 @@ public class ShapePanel extends JPanel {
             
             return transform;
         } catch (Exception e) {
-            logger.error("Erro ao calcular transformação: {}", e.getMessage());
             throw new IllegalStateException("Erro ao calcular transformação: " + e.getMessage(), e);
         }
     }
@@ -136,7 +129,6 @@ public class ShapePanel extends JPanel {
                 throw new IllegalArgumentException("Tipo de geometria não suportado: " + geom.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.error("Erro ao desenhar geometria: {}", e.getMessage());
             throw new RuntimeException("Erro ao desenhar geometria", e);
         }
     }
@@ -171,7 +163,6 @@ public class ShapePanel extends JPanel {
                 g2d.draw(hole);
             }
         } catch (Exception e) {
-            logger.error("Erro ao desenhar polígono: {}", e.getMessage());
             throw new IllegalStateException("Erro ao desenhar polígono", e);
         }
     }
@@ -208,7 +199,6 @@ public class ShapePanel extends JPanel {
             path.closePath();
             return path;
         } catch (Exception e) {
-            logger.error("Erro ao converter geometria para Path2D: {}", e.getMessage());
             throw new RuntimeException("Erro ao converter geometria para Path2D", e);
         }
     }

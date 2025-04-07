@@ -1,8 +1,7 @@
 package cadastro.gui;
 
 import cadastro.importer.Cadastro;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import cadastro.importer.CadastroConstants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,14 +19,11 @@ import java.util.List;
  * @version 1.0
  */
 public class GUI extends JFrame {
-    private static final Logger logger = LoggerFactory.getLogger(GUI.class);
-    private static final int DEFAULT_CADASTROS_LOAD = 5000;
-
     // Declaração dos componentes da interface
     private final JTextField csvPathInput = new JTextField(20);
-    private final JButton browseButton = new JButton("Procurar");
-    private final JButton importButton = new JButton("Importar");
-    private final JButton showMore = new JButton("Mais");
+    private final JButton browseButton = new JButton(GUIConstants.BROWSE_BUTTON_TEXT);
+    private final JButton importButton = new JButton(GUIConstants.IMPORT_BUTTON_TEXT);
+    private final JButton showMore = new JButton(GUIConstants.SHOW_MORE_BUTTON_TEXT);
     private final JPanel resultsPanel = new JPanel();
     private int cadastrosResultPointer;
     private final List<JButton> sortButtons = new ArrayList<>();
@@ -42,18 +38,15 @@ public class GUI extends JFrame {
      */
     public GUI() {
         try {
-            setTitle("Gestão de Propriedades");
-            setSize(800, 600);
+            setTitle(GUIConstants.WINDOW_TITLE);
+            setSize(GUIConstants.WINDOW_WIDTH, GUIConstants.WINDOW_HEIGHT);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
 
             initializeComponents();
             setupLayout();
             configureListeners();
-            
-            logger.info("Interface gráfica inicializada com sucesso");
         } catch (Exception e) {
-            logger.error("Erro ao inicializar a interface gráfica: {}", e.getMessage());
             throw new RuntimeException("Falha na inicialização da interface gráfica", e);
         }
     }
@@ -65,7 +58,7 @@ public class GUI extends JFrame {
 
     private void setupLayout() {
         JPanel filePanel = new JPanel(new BorderLayout());
-        JLabel fileLabel = new JLabel("Selecione o arquivo CSV:");
+        JLabel fileLabel = new JLabel(GUIConstants.FILE_SELECTION_LABEL);
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(browseButton);
         buttonPanel.add(importButton);
@@ -102,16 +95,14 @@ public class GUI extends JFrame {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 if (!selectedFile.exists()) {
-                    throw new IllegalArgumentException("Arquivo selecionado não existe");
+                    throw new IllegalArgumentException(GUIConstants.FILE_NOT_FOUND_ERROR);
                 }
                 csvPathInput.setText(selectedFile.getAbsolutePath());
-                logger.info("Arquivo selecionado: {}", selectedFile.getAbsolutePath());
             }
         } catch (Exception ex) {
-            logger.error("Erro ao selecionar arquivo: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao selecionar arquivo: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -125,39 +116,36 @@ public class GUI extends JFrame {
         String path = csvPathInput.getText();
         if (path.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Por favor, selecione um arquivo CSV primeiro.",
-                    "Aviso",
+                    GUIConstants.SELECT_FILE_WARNING,
+                    GUIConstants.WARNING_TITLE,
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            logger.info("Iniciando importação de cadastros do arquivo: {}", path);
             cadastros = Cadastro.getCadastros(path);
             
             if (cadastros == null || cadastros.isEmpty()) {
-                throw new IllegalStateException("Nenhum cadastro foi importado do arquivo");
+                throw new IllegalStateException(GUIConstants.EMPTY_FILE_ERROR);
             }
 
             initializeSortButtons();
             displayResults();
-            logger.info("Importação concluída com sucesso. Total de cadastros: {}", cadastros.size());
         } catch (Exception ex) {
-            logger.error("Erro ao importar cadastros: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao importar: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void initializeSortButtons() {
         sortButtons.clear();
-        String[] buttonLabels = {"Sort by ID", "Sort by Length", "Sort by Area", "Sort by Owner"};
-        int[] sortTypes = {Cadastro.SORT_BY_ID, Cadastro.SORT_BY_LENGTH, Cadastro.SORT_BY_AREA, Cadastro.SORT_BY_OWNER};
+        int[] sortTypes = {CadastroConstants.SORT_BY_ID, CadastroConstants.SORT_BY_LENGTH, 
+                          CadastroConstants.SORT_BY_AREA, CadastroConstants.SORT_BY_OWNER};
 
-        for (int i = 0; i < buttonLabels.length; i++) {
-            JButton button = new JButton(buttonLabels[i]);
+        for (int i = 0; i < GUIConstants.SORT_BUTTON_LABELS.length; i++) {
+            JButton button = new JButton(GUIConstants.SORT_BUTTON_LABELS[i]);
             final int sortType = sortTypes[i];
             button.addActionListener(evento -> sortResults(evento, sortType));
             sortButtons.add(button);
@@ -173,18 +161,15 @@ public class GUI extends JFrame {
     private void sortResults(ActionEvent e, int sortType) {
         try {
             if (cadastros == null || cadastros.isEmpty()) {
-                throw new IllegalStateException("Nenhum cadastro para ordenar");
+                throw new IllegalStateException(GUIConstants.EMPTY_LIST_ERROR + "ordenar");
             }
 
-            logger.info("Iniciando ordenação por tipo: {}", sortType);
             cadastros = Cadastro.sortCadastros(cadastros, sortType);
             displayResults();
-            logger.info("Ordenação concluída com sucesso");
         } catch (Exception ex) {
-            logger.error("Erro ao ordenar cadastros: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao ordenar: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -201,12 +186,10 @@ public class GUI extends JFrame {
             resultsPanel.add(showMore);
             resultsPanel.revalidate();
             resultsPanel.repaint();
-            logger.debug("Resultados exibidos com sucesso");
         } catch (Exception ex) {
-            logger.error("Erro ao exibir resultados: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao exibir resultados: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -228,10 +211,10 @@ public class GUI extends JFrame {
     private void moreResults(ActionEvent e) {
         try {
             if (cadastros == null || cadastros.isEmpty()) {
-                throw new IllegalStateException("Nenhum cadastro para exibir");
+                throw new IllegalStateException(GUIConstants.EMPTY_LIST_ERROR + "exibir");
             }
 
-            int toLoad = cadastrosResultPointer + DEFAULT_CADASTROS_LOAD;
+            int toLoad = cadastrosResultPointer + GUIConstants.DEFAULT_CADASTROS_LOAD;
             if (toLoad > cadastros.size()) {
                 showMore.setEnabled(false);
             }
@@ -241,12 +224,10 @@ public class GUI extends JFrame {
             resultsPanel.add(showMore);
             resultsPanel.revalidate();
             resultsPanel.repaint();
-            logger.debug("Mais resultados carregados. Total exibido: {}", cadastrosResultPointer);
         } catch (Exception ex) {
-            logger.error("Erro ao carregar mais resultados: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao carregar mais resultados: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -256,13 +237,12 @@ public class GUI extends JFrame {
      */
     private void addResults() {
         try {
-            int toLoad = Math.min(cadastrosResultPointer + DEFAULT_CADASTROS_LOAD, cadastros.size());
+            int toLoad = Math.min(cadastrosResultPointer + GUIConstants.DEFAULT_CADASTROS_LOAD, cadastros.size());
             for (int i = cadastrosResultPointer; i < toLoad; i++) {
                 showCadastroResult(cadastros.get(i));
             }
             cadastrosResultPointer = toLoad;
         } catch (Exception ex) {
-            logger.error("Erro ao adicionar resultados: {}", ex.getMessage());
             throw new RuntimeException("Erro ao adicionar resultados ao painel", ex);
         }
     }
@@ -275,20 +255,21 @@ public class GUI extends JFrame {
     private void showCadastroResult(Cadastro cadastro) {
         try {
             if (cadastro == null) {
-                throw new IllegalArgumentException("Cadastro não pode ser nulo");
+                throw new IllegalArgumentException(GUIConstants.NULL_CADASTRO_ERROR);
             }
 
-            JButton cadastroButton = new JButton("Mostrar shape");
+            JButton cadastroButton = new JButton(GUIConstants.SHOW_SHAPE_BUTTON_TEXT);
             cadastroButton.addActionListener(_ -> showShapeWindow(cadastro));
 
             JPanel cardPanel = new JPanel(new BorderLayout());
             cardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             JLabel infoLabel = new JLabel(
-                    "<html>Id: " + cadastro.getId() +
-                            "<br>Proprietário: " + cadastro.getOwner() +
-                            "<br>Área: " + cadastro.getArea() +
-                            "<br>Comprimento: " + cadastro.getLength() + "</html>");
+                    String.format(GUIConstants.CADASTRO_INFO_FORMAT,
+                            cadastro.getId(),
+                            cadastro.getOwner(),
+                            cadastro.getArea(),
+                            cadastro.getLength()));
 
             cardPanel.add(infoLabel, BorderLayout.CENTER);
             cardPanel.add(cadastroButton, BorderLayout.SOUTH);
@@ -297,12 +278,11 @@ public class GUI extends JFrame {
             resultsPanel.add(cardPanel);
             resultsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-            if (cadastrosResultPointer % DEFAULT_CADASTROS_LOAD == 0) {
+            if (cadastrosResultPointer % GUIConstants.DEFAULT_CADASTROS_LOAD == 0) {
                 resultsPanel.revalidate();
                 resultsPanel.repaint();
             }
         } catch (Exception ex) {
-            logger.error("Erro ao exibir cadastro: {}", ex.getMessage());
             throw new RuntimeException("Erro ao exibir cadastro no painel", ex);
         }
     }
@@ -315,23 +295,21 @@ public class GUI extends JFrame {
     private void showShapeWindow(Cadastro cadastro) {
         try {
             if (cadastro == null) {
-                throw new IllegalArgumentException("Cadastro não pode ser nulo");
+                throw new IllegalArgumentException(GUIConstants.NULL_CADASTRO_ERROR);
             }
 
-            JFrame shapeFrame = new JFrame("Shape - " + cadastro.getId());
-            shapeFrame.setSize(600, 600);
+            JFrame shapeFrame = new JFrame(GUIConstants.SHAPE_WINDOW_TITLE + cadastro.getId());
+            shapeFrame.setSize(GUIConstants.SHAPE_WINDOW_SIZE, GUIConstants.SHAPE_WINDOW_SIZE);
             shapeFrame.setLocationRelativeTo(this);
 
             ShapePanel shapePanel = new ShapePanel(cadastro.getShape());
             shapeFrame.add(shapePanel);
 
             shapeFrame.setVisible(true);
-            logger.debug("Janela de shape exibida para o cadastro: {}", cadastro.getId());
         } catch (Exception ex) {
-            logger.error("Erro ao exibir shape: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this,
                     "Erro ao exibir shape: " + ex.getMessage(),
-                    "Erro",
+                    GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }

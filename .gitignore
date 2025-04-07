@@ -41,3 +41,5 @@ build/
 logs/
 *.log
 logs/cadastro.log
+test-results/
+test-results/*.log
