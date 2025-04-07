@@ -56,10 +56,26 @@ public class Cadastro {
             this.id = Integer.parseInt(record.get(0));
             logger.trace("ID do cadastro: {}", this.id);
             
-            this.length = Double.parseDouble(record.get(3));
+            // Validação do comprimento
+            String lengthStr = record.get(3);
+            if (lengthStr == null || lengthStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Comprimento não pode ser nulo ou vazio");
+            }
+            this.length = Double.parseDouble(lengthStr);
+            if (this.length <= 0) {
+                throw new IllegalArgumentException("Comprimento deve ser maior que zero");
+            }
             logger.trace("Comprimento do cadastro: {}", this.length);
             
-            this.area = Double.parseDouble(record.get(4));
+            // Validação da área
+            String areaStr = record.get(4);
+            if (areaStr == null || areaStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Área não pode ser nula ou vazia");
+            }
+            this.area = Double.parseDouble(areaStr);
+            if (this.area <= 0) {
+                throw new IllegalArgumentException("Área deve ser maior que zero");
+            }
             logger.trace("Área do cadastro: {}", this.area);
             
             this.shape = handleShape(record.get(5));
@@ -136,16 +152,31 @@ public class Cadastro {
              CSVParser parser = CSVFormat.newFormat(';').parse(in)) {
 
             List<CSVRecord> records = parser.getRecords();
-            for(int i = 1; i < records.size(); i++) {
-                cadastros.add(new Cadastro(records.get(i)));
+            int totalRecords = records.size();
+            int skippedRecords = 0;
+            
+            for(int i = 1; i < totalRecords; i++) {
+                try {
+                    Cadastro cadastro = new Cadastro(records.get(i));
+                    cadastros.add(cadastro);
+                } catch (IllegalArgumentException | ParseException e) {
+                    skippedRecords++;
+                    logger.warn("Registro {} ignorado devido a erro: {}", i, e.getMessage());
+                }
             }
+            
+            logger.info("Processamento concluído. Total de registros: {}, Registros válidos: {}, Registros ignorados: {}", 
+                totalRecords - 1, cadastros.size(), skippedRecords);
+            
+            if (cadastros.isEmpty()) {
+                logger.error("Nenhum registro válido encontrado no arquivo");
+                throw new IllegalStateException("Nenhum registro válido encontrado no arquivo");
+            }
+            
             return cadastros;
         } catch (IOException e) {
             logger.error("Erro ao ler o arquivo CSV: {}", path, e);
             throw new Exception("Erro ao ler o ficheiro CSV", e);
-        } catch (ParseException e) {
-            logger.error("Erro ao processar geometria", e);
-            throw new RuntimeException(e);
         }
     }
 
