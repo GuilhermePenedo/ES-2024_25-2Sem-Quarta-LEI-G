@@ -259,7 +259,7 @@ public class GUI extends JFrame {
             }
 
             JButton cadastroButton = new JButton(GUIConstants.SHOW_SHAPE_BUTTON_TEXT);
-            cadastroButton.addActionListener(_ -> showShapeWindow(cadastro));
+            cadastroButton.addActionListener(k -> showShapeWindow(cadastro));
 
             JPanel cardPanel = new JPanel(new BorderLayout());
             cardPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

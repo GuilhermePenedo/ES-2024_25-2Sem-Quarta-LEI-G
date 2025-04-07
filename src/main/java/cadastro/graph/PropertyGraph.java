@@ -101,8 +101,8 @@ public class PropertyGraph {
             throw new IllegalArgumentException(PropertyGraphConstants.NULL_PROPERTY_ERROR);
         }
 
-        adjacencyList.computeIfAbsent(property1, _ -> new HashSet<>()).add(property2);
-        adjacencyList.computeIfAbsent(property2, _ -> new HashSet<>()).add(property1);
+        adjacencyList.computeIfAbsent(property1, k -> new HashSet<>()).add(property2);
+        adjacencyList.computeIfAbsent(property2, k -> new HashSet<>()).add(property1);
     }
 
     /**
