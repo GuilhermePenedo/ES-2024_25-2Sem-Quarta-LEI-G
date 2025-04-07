@@ -6,12 +6,12 @@ Projeto de Engenharia de Software 2024/25
 - Disciplina: Engenharia de Software
 - Semestre: 2º Semestre 2024/25
 
-| Nome               | Número de Estudante | GitHub Username   |
-|--------------------|---------------------|-------------------|
-| [Guilherme Penedo] | [111222]            | [GuilhermePenedo] |
-| [Pedro Pacheco]    | [111039]            | [pcp2003]         |
-| [João Antunes]     | [111139]            | [deavenZ]         |
-| [Rafael Lopes]]    | [111110]            | [tranquilizante]  |
+| Nome             | Número de Estudante | GitHub Username |
+|------------------|---------------------|-----------------|
+| Guilherme Penedo | 111222              | GuilhermePenedo |
+| Pedro Pacheco    | 111039              | pcp2003         |
+| João Antunes     | 111139              | deavenZ         |
+| Rafael Lopes     | 111110              | tranquilizante  |
 
 
 ## Descrição do Projeto
@@ -56,9 +56,11 @@ src/
     ├── java/
     │   ├── cadastro/
     │   │   ├── importer/
-    │   │   │   └── CadastroTest.java
+    │   │   │   ├── CadastroTest.java
+    │   │   │   └── CadastroTestLogger.java
     │   │   └── graph/
-    │   │       └── PropertyGraphTest.java
+    │   │       ├── PropertyGraphTest.java
+    │   │       └── PropertyGraphTestLogger.java
 ```
 
 ### Classes Principais
