@@ -1,15 +1,27 @@
 # ES-2024_25-2Sem-Quarta-LEI-G
 Projeto de Engenharia de Software 2024/25
 
+## Identificação da Equipa
+- Grupo G
+- Disciplina: Engenharia de Software
+- Semestre: 2º Semestre 2024/25
+
+| Nome               | Número de Estudante | GitHub Username   |
+|--------------------|---------------------|-------------------|
+| [Guilherme Penedo] | [111222]            | [GuilhermePenedo] |
+| [Pedro Pacheco]    | [111039]            | [pcp2003]         |
+| [João Antunes]     | [111139]            | [deavenZ]         |
+| [Rafael Lopes]]    | [111110]            | [tranquilizante]  |
+
+
 ## Descrição do Projeto
-Este projeto é um sistema de gerenciamento de cadastros imobiliários que processa dados geográficos a partir de arquivos CSV. O sistema utiliza tecnologias modernas para processamento de dados geoespaciais e logging robusto, com uma interface gráfica para visualização dos dados.
+O projeto consiste num sistema de gerenciamento de cadastros imobiliários que processa dados geográficos a partir de arquivos CSV. O sistema utiliza tecnologias modernas para processamento de dados geoespaciais e logging robusto, com uma interface gráfica para a visualização dos dados.
 
 ### Funcionalidades Principais
 - Importação de dados cadastrais de arquivos CSV
 - Processamento de geometrias MultiPolygon usando JTS (Java Topology Suite)
-- Sistema de logging completo com output para console e arquivo
+- Sistema de logging completo com output para consola e arquivo
 - Validação de dados geométricos
-- Representação de propriedades como vértices em um grafo
 - Detecção de adjacências físicas entre propriedades
 - Ordenação de cadastros por diferentes critérios (ID, comprimento, área, proprietário)
 - Interface gráfica para visualização e interação com os dados
@@ -68,7 +80,7 @@ src/
 - Utiliza logging para rastrear operações importantes
 
 #### GUI
-- Interface gráfica do usuário
+- Implementada a interface gráfica do usuário utilizando Java Swing
 - Visualização de cadastros e suas propriedades
 - Painel dedicado para visualização de formas geométricas
 - Interação com o grafo de propriedades
@@ -116,7 +128,3 @@ Níveis de log implementados:
 - UTF-8 encoding
 - Dependências gerenciadas via Maven
 
-## Equipe
-- Grupo G
-- Disciplina: Engenharia de Software
-- Semestre: 2º Semestre 2024/25
