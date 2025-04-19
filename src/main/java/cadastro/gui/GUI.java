@@ -2,6 +2,7 @@ package cadastro.gui;
 
 import cadastro.importer.Cadastro;
 import cadastro.importer.CadastroConstants;
+import cadastro.graph.PropertyGraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,10 +25,12 @@ public class GUI extends JFrame {
     private final JButton browseButton = new JButton(GUIConstants.BROWSE_BUTTON_TEXT);
     private final JButton importButton = new JButton(GUIConstants.IMPORT_BUTTON_TEXT);
     private final JButton showMore = new JButton(GUIConstants.SHOW_MORE_BUTTON_TEXT);
+    private final JButton viewGraphButton = new JButton(GUIConstants.VIEW_GRAPH_BUTTON_TEXT);
     private final JPanel resultsPanel = new JPanel();
     private int cadastrosResultPointer;
     private final List<JButton> sortButtons = new ArrayList<>();
     private List<Cadastro> cadastros;
+    private PropertyGraph propertyGraph;
 
     /**
      * Construtor da classe GUI.
@@ -54,6 +57,7 @@ public class GUI extends JFrame {
     private void initializeComponents() {
         csvPathInput.setEditable(false);
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+        viewGraphButton.setEnabled(false);
     }
 
     private void setupLayout() {
@@ -62,6 +66,7 @@ public class GUI extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(browseButton);
         buttonPanel.add(importButton);
+        buttonPanel.add(viewGraphButton);
 
         filePanel.add(fileLabel, BorderLayout.WEST);
         filePanel.add(csvPathInput, BorderLayout.CENTER);
@@ -78,6 +83,7 @@ public class GUI extends JFrame {
         browseButton.addActionListener(this::browseFile);
         importButton.addActionListener(this::importCadastros);
         showMore.addActionListener(this::moreResults);
+        viewGraphButton.addActionListener(this::showGraphVisualization);
     }
 
     /**
@@ -128,6 +134,9 @@ public class GUI extends JFrame {
             if (cadastros == null || cadastros.isEmpty()) {
                 throw new IllegalStateException(GUIConstants.EMPTY_FILE_ERROR);
             }
+
+            // Habilitar o botão de visualização do grafo
+            viewGraphButton.setEnabled(true);
 
             initializeSortButtons();
             displayResults();
@@ -309,6 +318,71 @@ public class GUI extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Erro ao exibir shape: " + ex.getMessage(),
+                    GUIConstants.ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Exibe a visualização do grafo de propriedades em uma nova janela.
+     * 
+     * @param e O evento de ação que disparou o método
+     */
+    private void showGraphVisualization(ActionEvent e) {
+        try {
+            if (cadastros == null || cadastros.isEmpty()) {
+                throw new IllegalStateException(GUIConstants.EMPTY_LIST_ERROR + "visualizar grafo");
+            }
+
+            // Criar a janela de carregamento
+            JFrame loadingFrame = new JFrame(GUIConstants.GRAPH_WINDOW_TITLE);
+            loadingFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            loadingFrame.setSize(300, 100);
+            loadingFrame.setLocationRelativeTo(this);
+            
+            JPanel loadingPanel = new JPanel(new BorderLayout());
+            JLabel loadingLabel = new JLabel("A carregar...", SwingConstants.CENTER);
+            loadingPanel.add(loadingLabel, BorderLayout.CENTER);
+            loadingFrame.add(loadingPanel);
+            loadingFrame.setVisible(true);
+
+            // Criar o grafo em uma thread separada
+            SwingWorker<PropertyGraph, Void> worker = new SwingWorker<PropertyGraph, Void>() {
+                @Override
+                protected PropertyGraph doInBackground() {
+                    return new PropertyGraph(cadastros);
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        loadingFrame.dispose();
+                        PropertyGraph graph = get();
+                        
+                        // Criar a janela de visualização do grafo
+                        JFrame graphFrame = new JFrame(GUIConstants.GRAPH_WINDOW_TITLE);
+                        graphFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                        
+                        GraphPanel graphPanel = new GraphPanel(graph);
+                        JScrollPane scrollPane = new JScrollPane(graphPanel);
+                        
+                        graphFrame.add(scrollPane);
+                        graphFrame.setSize(800, 600);
+                        graphFrame.setLocationRelativeTo(GUI.this);
+                        graphFrame.setVisible(true);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(GUI.this,
+                                "Erro ao visualizar grafo: " + ex.getMessage(),
+                                GUIConstants.ERROR_TITLE,
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+
+            worker.execute();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao visualizar grafo: " + ex.getMessage(),
                     GUIConstants.ERROR_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }

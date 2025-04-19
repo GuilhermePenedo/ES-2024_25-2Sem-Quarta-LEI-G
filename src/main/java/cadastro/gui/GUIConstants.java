@@ -45,4 +45,9 @@ public class GUIConstants {
 
     // Constante para carregamento de cadastros
     public static final int DEFAULT_CADASTROS_LOAD = 5000;
+
+    // Graph visualization constants
+    public static final String VIEW_GRAPH_BUTTON_TEXT = "Visualizar Grafo";
+    public static final String GRAPH_WINDOW_TITLE = "Visualização do Grafo de Propriedades";
+    public static final String GRAPH_ERROR = "Erro ao criar grafo de propriedades";
 } 

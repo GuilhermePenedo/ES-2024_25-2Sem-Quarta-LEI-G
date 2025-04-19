@@ -177,4 +177,13 @@ public class PropertyGraph {
         sb.append("], adjacencies=[]}");
         return sb.toString();
     }
+
+    /**
+     * Retorna a lista de todas as propriedades no grafo.
+     * 
+     * @return Lista de propriedades
+     */
+    public List<Cadastro> getProperties() {
+        return cadastros;
+    }
 }
